@@ -18,6 +18,11 @@
 #    CDN_TZ            fuso do painel (padrão: America/Sao_Paulo)
 # ==================================================================
 set -Eeuo pipefail
+# Proteção contra arquivo cortado (colar/enviar arquivo grande no celular às vezes corta no meio).
+if [ -f "$0" ] && [ "$(tail -n 1 "$0")" != "# __FIM_DO_SCRIPT__" ]; then
+  echo "ERRO: o script está INCOMPLETO (cortado no envio). Nada foi alterado. Envie o arquivo de novo (wc -l deve dar 3484)." >&2
+  exit 1
+fi
 
 VERSION="1.3.1"
 export DEBIAN_FRONTEND=noninteractive
@@ -2462,10 +2467,4 @@ function page_dash(): void
 <div class="grid">
   <div class="stat"><span>Meus domínios</span><b><?= $mine ?><?= $max > 0 ? ' / ' . $max : '' ?></b></div>
   <?php if ($admin): ?>
-  <div class="stat"><span>Total na CDN</span><b><?= count($db['domains']) ?></b></div>
-  <div class="stat"><span>Clientes</span><b><?= count($db['users']) ?></b></div>
-  <?php endif; ?>
-  <div class="stat"><span>IP da CDN</span><b class="mono" style="font-size:16px"><?= h($settings['public_ip'] ?? '—') ?></b></div>
-</div>
-
-<div class="card"
+  <div class="stat"><span>To
